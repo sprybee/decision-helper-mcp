@@ -1,6 +1,6 @@
 {
   "repo_url": "https://github.com/sprybee/decision-helper-mcp.git",
-  "ref": "main",
+  "ref": "master",
   "configuration": {
     "schemaVersion": 1,
     "name": "decision-helper-mcp",
