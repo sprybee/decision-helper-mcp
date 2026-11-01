@@ -1,0 +1,48 @@
+{
+  "repo_url": "",
+  "ref": "main",
+  "configuration": {
+    "schemaVersion": 1,
+    "name": "decision-helper-mcp",
+    "language": "python",
+    "runtime": "python3.10",
+    "entrypoint": "decision_helper_mcp.server",
+    "mcpObject": "mcp",
+    "description": "使用操作系统随机源提供掷骰子、不放回抽取和选项洗牌，无需业务密钥，不读写外部系统。",
+    "server": {
+      "port": 9000,
+      "path": "/mcp",
+      "stateless": true,
+      "gatewayAuth": false
+    },
+    "resources": {
+      "memoryMB": 512,
+      "timeoutSeconds": 120
+    },
+    "config": [],
+    "downstream": [],
+    "presentation": {
+      "displayName": "随机决策助手",
+      "category": "实用工具",
+      "readme": "# 随机决策助手 MCP\n\n为日常选择、抽签和桌游提供三个随机工具。使用操作系统随机源，不读取文件、不访问外部接口、不保存请求，也不需要业务密钥。适合辅助普通选择，不用于正式博彩或需要审计和可复现记录的抽奖。\n\n## 工具\n\n| 工具 | 输入 | 输出 |\n| --- | --- | --- |\n| `roll_dice` | `count`：1–20，默认 1；`sides`：2–1000，默认 6 | `rolls` 每枚骰子的点数、`total` 总和、`count`、`sides` |\n| `draw_options` | `options`：候选字符串数组；`count`：1 到候选数量，默认 1 | `selected` 抽中的原始 `index` 和 `value`，以及 `population_size` |\n| `shuffle_options` | `options`：候选字符串数组 | `shuffled` 排列后的原始 `index` 和 `value`，以及 `count` |\n\n候选数组必须包含 1–1000 项；每项最多 200 个字符，不能为空或仅含空白。索引从 0 开始。不放回抽取以数组位置为单位，相同文本可以出现在多个位置。输入内容和空格会原样保留，工具不修改输入数组。参数超限时返回 MCP 工具错误，不截断数据、不自动调整数量。随机结果不会按请求重现。\n\n调用示例：\n\n```json\n{\"name\": \"draw_options\", \"arguments\": {\"options\": [\"散步\", \"读书\", \"做饭\"], \"count\": 1}}\n```\n\n返回示例（具体随机结果每次可能不同）：\n\n```json\n{\"selected\": [{\"index\": 1, \"value\": \"读书\"}], \"population_size\": 3}\n```\n\n## 安装与运行\n\n需要 Python 3.10 或更高版本。仓库根目录提供 `pyproject.toml`，通过 Hatchling 构建 wheel，依赖 MCP Python SDK `mcp>=1.26,<2`。\n\n```sh\npython -m pip install .\npython -m decision_helper_mcp.server\n```\n\n直接运行使用无状态 Streamable HTTP，监听 `0.0.0.0:9000/mcp`。直接运行的服务自身没有鉴权，仅应在可信开发环境中使用。\n\n## MCP Hub 发布\n\n入口模块为 `decision_helper_mcp.server`，模块顶层对象为 `mcp`，来自 `mcp.server.fastmcp.FastMCP`。在 Hub 上由平台自动托管 HTTP 和设置网关鉴权；端口 9000，路径 `/mcp`，运行时 `python3.10`。\n\n发布表单位于 `mcp-hub-draft.json`。配置参数 `config` 和下游系统 `downstream` 均为空。不需要使用者提供环境变量、下游权限或业务密钥。平台访问授权仍由 Hub 管理。\n\n将本项目作为独立公开 HTTPS Git 仓库的根目录发布；不能直接使用父仓库的子目录。公开远程和目标引用确定后，Publisher 需要通过 Hub inspect 获得真实 `inspection_id` 与固定 commit，再保存草稿和发布。发布表单不包含源码。\n\n本地恢复文件放在已忽略的 `.mcp-hub/` 中；不要提交令牌、Cookie 或真实凭据。\n",
+      "icon": null
+    }
+  },
+  "tag_ids": [],
+  "inspection_id": null,
+  "touched_fields": [
+    "name",
+    "language",
+    "runtime",
+    "entrypoint",
+    "mcpObject",
+    "description",
+    "server",
+    "resources",
+    "config",
+    "downstream",
+    "presentation.displayName",
+    "presentation.category",
+    "presentation.readme"
+  ]
+}
